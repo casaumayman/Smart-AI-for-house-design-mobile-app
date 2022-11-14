@@ -20,4 +20,17 @@ class ThemeStyle {
     }
     return ThemeStyle._internal(name, index);
   }
+
+  @override
+  String toString() {
+    return "name: $name, code: $code";
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return (other.hashCode == code);
+  }
+
+  @override
+  int get hashCode => code;
 }
