@@ -18,7 +18,11 @@ class InputZone extends GetView<HomeController> {
                 controller.sendInfoToServer();
               },
               child: const Text("Send")),
-          ElevatedButton(onPressed: () {}, child: const Text("History")),
+          ElevatedButton(
+              onPressed: () {
+                controller.gotoHistory();
+              },
+              child: const Text("History")),
         ],
       ),
     );

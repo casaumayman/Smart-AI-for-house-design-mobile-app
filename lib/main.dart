@@ -1,5 +1,5 @@
 import 'package:change_house_colors/constants/theme.dart';
-import 'package:change_house_colors/modules/home/home_binding.dart';
+import 'package:change_house_colors/routes/app_bindings.dart';
 import 'package:change_house_colors/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: appTheme,
       getPages: Routes.pages,
       initialRoute: "/",
-      initialBinding: HomeBinding(),
+      initialBinding: AppBindings(),
     );
   }
 }
