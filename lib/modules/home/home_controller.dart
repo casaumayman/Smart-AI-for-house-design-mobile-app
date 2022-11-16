@@ -62,6 +62,7 @@ class HomeController extends GetxController {
   }
 
   void gotoHistory() {
+    //TODO: Check disable button
     Get.toNamed(Routes.history);
   }
 }

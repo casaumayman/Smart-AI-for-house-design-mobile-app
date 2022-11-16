@@ -46,7 +46,7 @@ class AppController extends GetxController {
         imageBase64: base64, imageName: fileName, theme: themeStyle);
     _socketService.requestProcess(requestModel);
     showSnackbarSuccess("Picture has been sent!");
-    final path = await saveLocalImage(imageBytes, fileName);
+    final path = await saveLocalImage(imageBytes, fileName, true);
     LocalImage localImage =
         LocalImage(path: path, theme: themeStyle, name: fileName);
     _waitProcessingPool.add(localImage);
@@ -62,7 +62,7 @@ class AppController extends GetxController {
     //Save processed image
     final bytes = base64Decode(processedImage.imageBase64);
     String fileName = processedImage.imageName.replaceRange(0, 3, 'mod');
-    final path = await saveLocalImage(bytes, fileName);
+    final path = await saveLocalImage(bytes, fileName, false);
     LocalImage localProcessedImage =
         LocalImage(path: path, theme: imageFromPool.theme, name: fileName);
     final history = HistoryModel(
