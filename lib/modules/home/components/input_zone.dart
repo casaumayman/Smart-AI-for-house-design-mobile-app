@@ -19,11 +19,12 @@ class InputZone extends GetView<HomeController> {
             return ElevatedButton(
                 onPressed: handler, child: const Text("Send"));
           }),
-          ElevatedButton(
-              onPressed: () {
-                controller.gotoHistory();
-              },
-              child: const Text("History")),
+          Obx(() {
+            bool isDisable = controller.allowGoToHistory.isFalse;
+            final handler = isDisable ? null : controller.gotoHistory;
+            return ElevatedButton(
+                onPressed: handler, child: const Text("History"));
+          }),
         ],
       ),
     );

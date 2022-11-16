@@ -1,6 +1,7 @@
 import 'package:change_house_colors/app_controller.dart';
 import 'package:change_house_colors/modules/home/models/theme_style.dart';
 import 'package:change_house_colors/routes/routes.dart';
+import 'package:change_house_colors/shared/services/history/history_service.dart';
 import 'package:change_house_colors/shared/services/socket_service.dart';
 import 'package:change_house_colors/shared/utils/image_picker_utils.dart';
 import 'package:change_house_colors/shared/utils/snackbar_utils.dart';
@@ -11,21 +12,23 @@ import 'package:mime/mime.dart';
 class HomeController extends GetxController {
   final _socketService = Get.find<SocketService>();
   final _appController = Get.find<AppController>();
+  final _historyService = Get.find<HistoryService>();
 
   final currentImage = Rx<XFile?>(null);
   //Init royal theme
   final selectedTheme =
       Rx<ThemeStyle>(ThemeStyle.fromName(ThemeStyle.listHouseTheme[0]));
+  final allowGoToHistory = false.obs;
+  final isConnectSocket = false.obs;
 
   void setTheme(ThemeStyle style) {
     selectedTheme(style);
   }
 
-  final isConnectSocket = false.obs;
-
   @override
   void onInit() {
     isConnectSocket.bindStream(_socketService.isConnected.stream);
+    allowGoToHistory.bindStream(_historyService.isEmpty.stream);
     super.onInit();
   }
 
@@ -62,7 +65,6 @@ class HomeController extends GetxController {
   }
 
   void gotoHistory() {
-    //TODO: Check disable button
     Get.toNamed(Routes.history);
   }
 }

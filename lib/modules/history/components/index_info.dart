@@ -2,7 +2,7 @@ import 'package:change_house_colors/modules/history/history_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class IndexInfo extends GetView<HistoryController> {
+class IndexInfo extends StatelessWidget {
   const IndexInfo({super.key});
 
   @override
@@ -11,14 +11,16 @@ class IndexInfo extends GetView<HistoryController> {
       height: double.infinity,
       alignment: Alignment.center,
       margin: const EdgeInsets.only(right: 10),
-      child: Obx(() {
-        final index = controller.currentIndex.value + 1;
-        final total = controller.total;
-        return Text(
-          "$index/$total",
-          style: const TextStyle(color: Colors.white, fontSize: 20),
-        );
-      }),
+      child: GetBuilder<HistoryController>(
+        builder: (controller) {
+          final index = controller.currentIndex + 1;
+          final total = controller.data.length;
+          return Text(
+            "$index/$total",
+            style: const TextStyle(color: Colors.white, fontSize: 20),
+          );
+        },
+      ),
     );
   }
 }

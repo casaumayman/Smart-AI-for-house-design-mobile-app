@@ -5,7 +5,7 @@ import 'package:change_house_colors/modules/history/history_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class HistoryScreen extends GetView<HistoryController> {
+class HistoryScreen extends StatelessWidget {
   const HistoryScreen({super.key});
 
   @override
@@ -15,21 +15,24 @@ class HistoryScreen extends GetView<HistoryController> {
           title: const Text("History"),
           actions: [
             const IndexInfo(),
-            IconButton(
-                onPressed: controller.onDeleteItem,
-                icon: const Icon(
-                  Icons.delete,
-                  color: Color(0xFFFF7F7F),
-                ))
+            GetBuilder<HistoryController>(
+                builder: ((controller) => IconButton(
+                    onPressed: controller.onDeleteItem,
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Color(0xFFFF7F7F),
+                    ))))
           ],
         ),
-        body: Obx(() => Swiper(
-              itemCount: controller.total,
-              itemBuilder: (context, index) => HistoryItemScreen(index: index),
-              scrollDirection: Axis.horizontal,
-              loop: false,
-              index: controller.currentIndex.value,
-              onIndexChanged: controller.onChangeIndex,
-            )));
+        body: GetBuilder<HistoryController>(
+            builder: (controller) => Swiper(
+                  itemCount: controller.data.length,
+                  itemBuilder: (context, index) =>
+                      HistoryItemScreen(index: index),
+                  scrollDirection: Axis.horizontal,
+                  loop: false,
+                  index: controller.currentIndex,
+                  onIndexChanged: controller.onChangeIndex,
+                )));
   }
 }

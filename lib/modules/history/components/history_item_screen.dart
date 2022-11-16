@@ -1,27 +1,25 @@
 import 'package:change_house_colors/modules/history/components/image_scaffold.dart';
 import 'package:change_house_colors/modules/history/components/theme_name.dart';
+import 'package:change_house_colors/modules/history/history_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class HistoryItemScreen extends StatelessWidget {
-  const HistoryItemScreen({super.key, required this.index});
+  HistoryItemScreen({super.key, required this.index});
   final int index;
+  final controller = Get.find<HistoryController>();
 
   @override
   Widget build(BuildContext context) {
+    final model = controller.data[index];
     return Column(
-      children: const [
+      children: [
+        Expanded(child: ImageScaffold(path: model.originImage.path)),
         Expanded(
             child: ImageScaffold(
-          path: "https://tienganhikun.com/upload/images/house_ikun.jpg",
-          testing: true,
+          path: model.processedImage.path,
         )),
-        Expanded(
-            child: ImageScaffold(
-          path:
-              "https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?cs=srgb&dl=pexels-binyamin-mellish-186077.jpg&fm=jpg",
-          testing: true,
-        )),
-        ThemeName(name: "Hahaha"),
+        ThemeName(name: model.originImage.theme.name),
       ],
     );
   }
