@@ -1,13 +1,18 @@
+import 'package:change_house_colors/app_controller.dart';
 import 'package:change_house_colors/modules/home/models/theme_style.dart';
-import 'package:change_house_colors/services/socket_service.dart';
-import 'package:change_house_colors/utils/image_picker_utils.dart';
-import 'package:flutter/material.dart';
+import 'package:change_house_colors/routes/routes.dart';
+import 'package:change_house_colors/shared/services/socket_service.dart';
+import 'package:change_house_colors/shared/utils/image_picker_utils.dart';
+import 'package:change_house_colors/shared/utils/snackbar_utils.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mime/mime.dart';
 
 class HomeController extends GetxController {
-  final currentImageUrl = Rx<XFile?>(null);
   final _socketService = Get.find<SocketService>();
+  final _appController = Get.find<AppController>();
+
+  final currentImage = Rx<XFile?>(null);
   //Init royal theme
   final selectedTheme =
       Rx<ThemeStyle>(ThemeStyle.fromName(ThemeStyle.listHouseTheme[0]));
@@ -16,17 +21,25 @@ class HomeController extends GetxController {
     selectedTheme(style);
   }
 
+  final isConnectSocket = false.obs;
+
   @override
   void onInit() {
-    _socketService.connect();
-    _socketService.onReceive((data) {
-      debugPrint("Received data: $data");
-    });
+    isConnectSocket.bindStream(_socketService.isConnected.stream);
     super.onInit();
   }
 
-  void sendInfoToServer() {
-    _socketService.emit("Test emit data!");
+  void sendInfoToServer() async {
+    if (currentImage.value == null) {
+      return;
+    }
+    final image = currentImage.value!;
+    String? mimeType = lookupMimeType(image.path);
+    if (mimeType == null) {
+      showSnackbarError("Picture isn't valid!");
+      return;
+    }
+    _appController.addSentImage(image, selectedTheme.value);
   }
 
   void showImageSourcePicker() async {
@@ -38,17 +51,17 @@ class HomeController extends GetxController {
     if (res == "Camera") {
       var image = await picker.pickImage(source: ImageSource.camera);
       if (image != null) {
-        currentImageUrl(image);
+        currentImage(image);
       }
       return;
     }
     var image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      currentImageUrl(image);
+      currentImage(image);
     }
   }
 
   void gotoHistory() {
-    _socketService.emit("Emit data 2");
+    Get.toNamed(Routes.history);
   }
 }

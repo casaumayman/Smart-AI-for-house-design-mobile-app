@@ -13,11 +13,12 @@ class InputZone extends GetView<HomeController> {
       child: Column(
         children: [
           ThemePicker(),
-          ElevatedButton(
-              onPressed: () {
-                controller.sendInfoToServer();
-              },
-              child: const Text("Send")),
+          Obx(() {
+            bool isDisable = controller.currentImage.value == null;
+            final handler = isDisable ? null : controller.sendInfoToServer;
+            return ElevatedButton(
+                onPressed: handler, child: const Text("Send"));
+          }),
           ElevatedButton(
               onPressed: () {
                 controller.gotoHistory();

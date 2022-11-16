@@ -2,6 +2,7 @@
     package="com.example.change_house_colors">
    <application
         android:label="change_house_colors"
+        android:requestLegacyExternalStorage="true"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

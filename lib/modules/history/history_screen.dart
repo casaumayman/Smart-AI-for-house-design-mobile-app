@@ -5,10 +5,13 @@ class HistoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.green,
-      alignment: Alignment.center,
-      child: const Text("History"),
+    return Scaffold(
+      appBar: AppBar(title: const Text("History")),
+      body: Container(
+        color: Colors.green,
+        alignment: Alignment.center,
+        child: const Text("History"),
+      ),
     );
   }
 }

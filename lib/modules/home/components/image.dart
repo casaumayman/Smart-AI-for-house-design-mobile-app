@@ -16,7 +16,7 @@ class DisplayImage extends GetView<HomeController> {
           border: Border.all(
               color: Theme.of(context).colorScheme.primary, width: 2)),
       margin: const EdgeInsets.only(bottom: 10),
-      child: Obx(() => _renderImage(controller.currentImageUrl.value)),
+      child: Obx(() => _renderImage(controller.currentImage.value)),
     );
   }
 
