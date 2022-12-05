@@ -19,6 +19,14 @@ class HistoryService extends GetxService {
   @override
   void onInit() async {
     _localStore = await SharedPreferences.getInstance();
+    _loadDataFromLocal();
+    _history.listen((data) {
+      isEmpty.value = data.isEmpty;
+    });
+    super.onInit();
+  }
+
+  void _loadDataFromLocal() {
     final jsonStr = _localStore.getString(historyKey);
     if (jsonStr != null) {
       final parsedMap = jsonDecode(jsonStr).cast<Map<String, dynamic>>();
@@ -26,11 +34,8 @@ class HistoryService extends GetxService {
           .map<HistoryModel>((json) => HistoryModel.fromJson(json))
           .toList();
       _history.addAll(localData);
+      isEmpty.value = localData.length == 0;
     }
-    _history.listen((data) {
-      isEmpty.value = data.isEmpty;
-    });
-    super.onInit();
   }
 
   Future<void> addHistory(HistoryModel model) async {

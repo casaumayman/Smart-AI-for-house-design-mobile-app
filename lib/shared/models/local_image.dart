@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:change_house_colors/modules/home/models/theme_style.dart';
 
 class LocalImage {
@@ -12,8 +10,7 @@ class LocalImage {
   Map<String, dynamic> toJson() =>
       {"path": path, "name": name, "theme": theme.name};
 
-  factory LocalImage.fromJson(String json) {
-    Map<String, dynamic> jsonMap = jsonDecode(json);
+  factory LocalImage.fromJson(Map<String, dynamic> jsonMap) {
     final theme = ThemeStyle.fromName(jsonMap["theme"]);
     return LocalImage(
         path: jsonMap["path"], theme: theme, name: jsonMap["name"]);

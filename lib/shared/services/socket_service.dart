@@ -1,15 +1,14 @@
 import 'dart:convert';
 
-import 'package:change_house_colors/constants/socket_constants.dart';
+import 'package:change_house_colors/constants/network_constants.dart';
 import 'package:change_house_colors/shared/models/process_image_req.dart';
-import 'package:change_house_colors/shared/utils/snackbar_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 class SocketService extends GetxService {
   Socket socket = io(
-      socketHost,
+      networkHost,
       OptionBuilder()
           .setTransports(['websocket'])
           .disableAutoConnect()
@@ -58,18 +57,18 @@ class SocketService extends GetxService {
     });
   }
 
-  void _emit(String data) {
+  bool _emit(String data) {
     if (!isConnected.value) {
-      return;
+      return false;
     }
     socket.emit(eventName, data);
+    return true;
   }
 
-  void requestProcess(ProcessImageRequest request) {
+  bool requestProcess(ProcessImageRequest request) {
     String json = jsonEncode(request);
     debugPrint('send image');
-    _emit(json);
-    showSnackbarSuccess("Image have sent to server!");
+    return _emit(json);
   }
 
   @override

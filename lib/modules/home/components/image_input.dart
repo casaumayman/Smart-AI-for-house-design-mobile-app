@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
-class DisplayImage extends GetView<HomeController> {
-  const DisplayImage({super.key});
+class ImageInput extends GetView<HomeController> {
+  const ImageInput({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +15,7 @@ class DisplayImage extends GetView<HomeController> {
       decoration: BoxDecoration(
           border: Border.all(
               color: Theme.of(context).colorScheme.primary, width: 2)),
-      margin: const EdgeInsets.only(bottom: 10),
-      child: Obx(() => _renderImage(controller.currentImage.value)),
+      child: Obx(() => _renderImage(controller.currentInputImage.value)),
     );
   }
 

@@ -44,7 +44,10 @@ class AppController extends GetxController {
     String fileName = "ori_${now}_$themeId.$ext";
     final requestModel = ProcessImageRequest(
         imageBase64: base64, imageName: fileName, theme: themeStyle);
-    _socketService.requestProcess(requestModel);
+    var isSuccess = _socketService.requestProcess(requestModel);
+    if (!isSuccess) {
+      return;
+    }
     showSnackbarSuccess("Picture has been sent!");
     final path = await saveLocalImage(imageBytes, fileName, true);
     LocalImage localImage =
@@ -60,7 +63,8 @@ class AppController extends GetxController {
       return;
     }
     //Save processed image
-    final bytes = base64Decode(processedImage.imageBase64);
+    String base64 = processedImage.imageBase64.split(',')[1];
+    final bytes = base64Decode(base64);
     String fileName = processedImage.imageName.replaceRange(0, 3, 'mod');
     final path = await saveLocalImage(bytes, fileName, false);
     LocalImage localProcessedImage =
@@ -68,6 +72,6 @@ class AppController extends GetxController {
     final history = HistoryModel(
         originImage: imageFromPool, processedImage: localProcessedImage);
     await _historyService.addHistory(history);
-    showSnackbarSuccess("Recieved new picture!");
+    showSnackbarInfo("Recieved new picture!");
   }
 }

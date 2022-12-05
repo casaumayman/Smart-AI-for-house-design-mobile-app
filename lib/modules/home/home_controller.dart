@@ -1,49 +1,99 @@
-import 'package:change_house_colors/app_controller.dart';
+import 'package:change_house_colors/modules/home/helper.dart';
+import 'package:change_house_colors/modules/home/models/process_status.dart';
 import 'package:change_house_colors/modules/home/models/theme_style.dart';
 import 'package:change_house_colors/routes/routes.dart';
+import 'package:change_house_colors/shared/models/predict_req.dart';
+import 'package:change_house_colors/shared/models/predict_res.dart';
 import 'package:change_house_colors/shared/services/history/history_service.dart';
+import 'package:change_house_colors/shared/services/predict_service.dart';
 import 'package:change_house_colors/shared/services/socket_service.dart';
 import 'package:change_house_colors/shared/utils/image_picker_utils.dart';
 import 'package:change_house_colors/shared/utils/snackbar_utils.dart';
+import 'package:change_house_colors/shared/utils/timing_utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 
 class HomeController extends GetxController {
   final _socketService = Get.find<SocketService>();
-  final _appController = Get.find<AppController>();
   final _historyService = Get.find<HistoryService>();
+  final _predictService = Get.find<PredictService>();
 
-  final currentImage = Rx<XFile?>(null);
+  final currentInputImage = Rx<XFile?>(null);
+  final currentOutputImage = Rx<Uint8List?>(null);
   //Init royal theme
   final selectedTheme =
       Rx<ThemeStyle>(ThemeStyle.fromName(ThemeStyle.listHouseTheme[0]));
   final allowGoToHistory = false.obs;
   final isConnectSocket = false.obs;
+  final currentStatus = Rx<EProcessStatus>(EProcessStatus.init);
+  late TimeMeasure _timerMeasure;
 
   void setTheme(ThemeStyle style) {
     selectedTheme(style);
   }
 
+  void _setCurrentImage(XFile file) {
+    currentInputImage(file);
+    currentStatus(EProcessStatus.waitingServer);
+    _sendPredictToServer(file);
+  }
+
   @override
   void onInit() {
     isConnectSocket.bindStream(_socketService.isConnected.stream);
-    allowGoToHistory.bindStream(_historyService.isEmpty.stream);
+    _historyService.isEmpty.stream.listen((v) {
+      allowGoToHistory(!v);
+    });
     super.onInit();
   }
 
-  void sendInfoToServer() async {
-    if (currentImage.value == null) {
-      return;
-    }
-    final image = currentImage.value!;
-    String? mimeType = lookupMimeType(image.path);
-    if (mimeType == null) {
-      showSnackbarError("Picture isn't valid!");
-      return;
-    }
-    _appController.addSentImage(image, selectedTheme.value);
+  void _processResponse(PredictResponse predict) async {
+    final bytes = await base64ToBytesIsolate(predict.pictureMask);
+    _timerMeasure.nextMeasure("Convert base64 to bytes!");
+    currentOutputImage(bytes);
+    currentStatus(EProcessStatus.done);
   }
+
+  void _sendPredictToServer(XFile file) async {
+    try {
+      _timerMeasure = TimeMeasure("Prepare send image to server");
+      String? mimeType = lookupMimeType(file.path);
+      if (mimeType == null) {
+        showSnackbarError("Picture isn't valid!");
+        return;
+      }
+      String ext = mimeType.split('/')[1];
+      String base64encoded = await xFileToBase64Isolate(file);
+      _timerMeasure.nextMeasure("Start send image");
+      String base64 = "data:$mimeType;base64,$base64encoded";
+      final now = DateTime.now().millisecondsSinceEpoch;
+      String fileName = "ori_$now.$ext";
+      final requestModel =
+          PredictRequest(pictureBase64: base64, fileName: fileName);
+      var response = await _predictService.getPredictMask(requestModel);
+      _timerMeasure.nextMeasure("Get mask from server!");
+      currentStatus(EProcessStatus.colorMapping);
+      _processResponse(response);
+    } catch (e) {
+      currentStatus(EProcessStatus.error);
+      debugPrint("Error: $e");
+    }
+  }
+
+  // void sendInfoToServer() async {
+  //   if (currentImage.value == null) {
+  //     return;
+  //   }
+  //   final image = currentImage.value!;
+  //   String? mimeType = lookupMimeType(image.path);
+  //   if (mimeType == null) {
+  //     showSnackbarError("Picture isn't valid!");
+  //     return;
+  //   }
+  //   _appController.addSentImage(image, selectedTheme.value);
+  // }
 
   void showImageSourcePicker() async {
     var res = await showImagePicker<String>(["Camera", "Library"]);
@@ -54,13 +104,13 @@ class HomeController extends GetxController {
     if (res == "Camera") {
       var image = await picker.pickImage(source: ImageSource.camera);
       if (image != null) {
-        currentImage(image);
+        _setCurrentImage(image);
       }
       return;
     }
     var image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      currentImage(image);
+      _setCurrentImage(image);
     }
   }
 

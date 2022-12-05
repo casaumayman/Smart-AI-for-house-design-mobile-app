@@ -8,6 +8,7 @@ Future<String> saveLocalImage(
   final folderName = isOrigin ? "ori" : "mod";
   final path = "${appDocDir.path}/$folderName/$fileName";
   final file = File(path);
+  await file.create(recursive: true);
   await file.writeAsBytes(byteData);
   return path;
 }

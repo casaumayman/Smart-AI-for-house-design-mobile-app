@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:change_house_colors/shared/models/local_image.dart';
 
 class HistoryModel {
@@ -11,8 +9,7 @@ class HistoryModel {
   Map<String, dynamic> toJson() =>
       {"originImage": originImage, "processedImage": processedImage};
 
-  factory HistoryModel.fromJson(String json) {
-    Map<String, dynamic> jsonMap = jsonDecode(json);
+  factory HistoryModel.fromJson(Map<String, dynamic> jsonMap) {
     return HistoryModel(
         originImage: LocalImage.fromJson(jsonMap["originImage"]),
         processedImage: LocalImage.fromJson(jsonMap["processedImage"]));

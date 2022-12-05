@@ -13,18 +13,18 @@ class InputZone extends GetView<HomeController> {
       child: Column(
         children: [
           ThemePicker(),
-          Obx(() {
-            bool isDisable = controller.currentImage.value == null;
-            final handler = isDisable ? null : controller.sendInfoToServer;
-            return ElevatedButton(
-                onPressed: handler, child: const Text("Send"));
-          }),
-          Obx(() {
-            bool isDisable = controller.allowGoToHistory.isFalse;
-            final handler = isDisable ? null : controller.gotoHistory;
-            return ElevatedButton(
-                onPressed: handler, child: const Text("History"));
-          }),
+          // Obx(() {
+          //   bool isDisable = controller.currentImage.value == null;
+          //   final handler = isDisable ? null : controller.sendInfoToServer;
+          //   return ElevatedButton(
+          //       onPressed: handler, child: const Text("Send"));
+          // }),
+          // Obx(() {
+          //   bool isDisable = controller.allowGoToHistory.isFalse;
+          //   final handler = isDisable ? null : controller.gotoHistory;
+          //   return ElevatedButton(
+          //       onPressed: handler, child: const Text("History"));
+          // }),
         ],
       ),
     );

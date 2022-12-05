@@ -28,3 +28,17 @@ void showSnackbarSuccess(String message) {
         color: mainColor,
       ));
 }
+
+void showSnackbarInfo(String message) {
+  const mainColor = Colors.blue;
+  Get.snackbar("Notification", message,
+      colorText: mainColor,
+      borderColor: mainColor,
+      borderWidth: 1,
+      backgroundColor: Colors.white,
+      animationDuration: const Duration(milliseconds: 200),
+      icon: const Icon(
+        Icons.info_outline,
+        color: mainColor,
+      ));
+}
