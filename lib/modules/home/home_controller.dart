@@ -1,15 +1,11 @@
 import 'package:change_house_colors/modules/home/helper.dart';
 import 'package:change_house_colors/modules/home/models/process_status.dart';
-import 'package:change_house_colors/modules/home/models/theme_style.dart';
 import 'package:change_house_colors/routes/routes.dart';
 import 'package:change_house_colors/shared/models/predict_req.dart';
 import 'package:change_house_colors/shared/models/predict_res.dart';
-import 'package:change_house_colors/shared/services/history/history_service.dart';
-import 'package:change_house_colors/shared/services/predict_service.dart';
-import 'package:change_house_colors/shared/services/socket_service.dart';
+import 'package:change_house_colors/shared/services/services.dart';
 import 'package:change_house_colors/shared/utils/image_picker_utils.dart';
 import 'package:change_house_colors/shared/utils/snackbar_utils.dart';
-import 'package:change_house_colors/shared/utils/timing_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,20 +15,13 @@ class HomeController extends GetxController {
   final _socketService = Get.find<SocketService>();
   final _historyService = Get.find<HistoryService>();
   final _predictService = Get.find<PredictService>();
+  final _themeService = Get.find<ThemeService>();
 
   final currentInputImage = Rx<XFile?>(null);
   final currentOutputImage = Rx<Uint8List?>(null);
-  //Init royal theme
-  final selectedTheme =
-      Rx<ThemeStyle>(ThemeStyle.fromName(ThemeStyle.listHouseTheme[0]));
   final allowGoToHistory = false.obs;
   final isConnectSocket = false.obs;
   final currentStatus = Rx<EProcessStatus>(EProcessStatus.init);
-  late TimeMeasure _timerMeasure;
-
-  void setTheme(ThemeStyle style) {
-    selectedTheme(style);
-  }
 
   void _setCurrentImage(XFile file) {
     currentInputImage(file);
@@ -51,14 +40,15 @@ class HomeController extends GetxController {
 
   void _processResponse(PredictResponse predict) async {
     final bytes = await base64ToBytesIsolate(predict.pictureMask);
-    _timerMeasure.nextMeasure("Convert base64 to bytes!");
+    //TODO: Continue
+    var colored =
+        await mappingColor("origin", bytes, _themeService.selectedTheme);
     currentOutputImage(bytes);
     currentStatus(EProcessStatus.done);
   }
 
   void _sendPredictToServer(XFile file) async {
     try {
-      _timerMeasure = TimeMeasure("Prepare send image to server");
       String? mimeType = lookupMimeType(file.path);
       if (mimeType == null) {
         showSnackbarError("Picture isn't valid!");
@@ -66,14 +56,12 @@ class HomeController extends GetxController {
       }
       String ext = mimeType.split('/')[1];
       String base64encoded = await xFileToBase64Isolate(file);
-      _timerMeasure.nextMeasure("Start send image");
       String base64 = "data:$mimeType;base64,$base64encoded";
       final now = DateTime.now().millisecondsSinceEpoch;
       String fileName = "ori_$now.$ext";
       final requestModel =
           PredictRequest(pictureBase64: base64, fileName: fileName);
       var response = await _predictService.getPredictMask(requestModel);
-      _timerMeasure.nextMeasure("Get mask from server!");
       currentStatus(EProcessStatus.colorMapping);
       _processResponse(response);
     } catch (e) {

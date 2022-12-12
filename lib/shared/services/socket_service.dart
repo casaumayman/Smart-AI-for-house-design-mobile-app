@@ -8,7 +8,7 @@ import 'package:socket_io_client/socket_io_client.dart';
 
 class SocketService extends GetxService {
   Socket socket = io(
-      networkHost,
+      networkHost.toString(),
       OptionBuilder()
           .setTransports(['websocket'])
           .disableAutoConnect()

@@ -12,5 +12,6 @@ class TimeMeasure {
     var diff = now.difference(_timeValue).inMilliseconds;
     double n = double.parse((diff / 1000).toStringAsFixed(2));
     debugPrint("$title take: $n seconds");
+    _timeValue = now;
   }
 }
