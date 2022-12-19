@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:change_house_colors/modules/home/helper.dart';
 import 'package:change_house_colors/modules/home/models/process_status.dart';
 import 'package:change_house_colors/routes/routes.dart';
@@ -8,6 +10,7 @@ import 'package:change_house_colors/shared/utils/image_picker_utils.dart';
 import 'package:change_house_colors/shared/utils/snackbar_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:image/image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 
@@ -40,9 +43,13 @@ class HomeController extends GetxController {
 
   void _processResponse(PredictResponse predict) async {
     final bytes = await base64ToBytesIsolate(predict.pictureMask);
-    //TODO: Continue
-    var colored =
-        await mappingColor("origin", bytes, _themeService.selectedTheme);
+    var image = decodePng(bytes);
+    if (image == null) {
+      debugPrint("Image == null");
+      return;
+    }
+    var colored = mappingColor(image, bytes, _themeService.selectedTheme);
+    debugPrint("colored: ${colored.length}");
     currentOutputImage(bytes);
     currentStatus(EProcessStatus.done);
   }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:change_house_colors/shared/services/theme/theme_model.dart';
 import 'package:flutter/foundation.dart';
+import 'package:image/image.dart';
 import 'package:image_picker/image_picker.dart';
 
 Future<Uint8List> base64ToBytesIsolate(String mask) async {
@@ -19,7 +20,7 @@ Future<String> xFileToBase64Isolate(XFile file) async {
   return base64encoded;
 }
 
-Future<dynamic> mappingColor(
-    dynamic origin, dynamic mask, ThemeModel themeModel) async {
-  return 1;
+List<int> mappingColor(Image origin, Uint8List mask, ThemeModel themeModel) {
+  var matrix = encodePng(origin, level: 0);
+  return matrix;
 }

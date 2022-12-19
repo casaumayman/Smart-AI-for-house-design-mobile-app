@@ -1,3 +1,4 @@
+import 'package:change_house_colors/modules/settings/components/theme_setting_item.dart';
 import 'package:flutter/material.dart';
 
 class SettingScreen extends StatelessWidget {
@@ -9,7 +10,10 @@ class SettingScreen extends StatelessWidget {
         appBar: AppBar(title: const Text("Setting")),
         body: Padding(
           padding: const EdgeInsets.all(10),
-          child: Column(children: const [Text("Coming soon...")]),
+          child: Column(children: const [
+            ThemeSettingItem(name: "Royal"),
+            ThemeSettingItem(name: "Ocean"),
+          ]),
         ));
   }
 }
