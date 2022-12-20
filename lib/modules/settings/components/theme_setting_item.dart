@@ -1,40 +1,53 @@
 import 'package:change_house_colors/modules/settings/components/house_element.dart';
+import 'package:change_house_colors/modules/settings/setting_controller.dart';
+import 'package:change_house_colors/shared/services/theme/theme_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class ThemeSettingItem extends StatelessWidget {
-  const ThemeSettingItem(
-      {super.key,
-      required this.name,
-      this.wallColor = const Color.fromRGBO(0, 255, 0, 1),
-      this.doorColor = const Color.fromRGBO(0, 0, 255, 1),
-      this.roofColor = const Color.fromRGBO(255, 0, 0, 1)});
-  final String name;
-  final Color wallColor;
-  final Color doorColor;
-  final Color roofColor;
+class ThemeSettingItem extends GetView<SettingController> {
+  const ThemeSettingItem({super.key, required this.model});
+  final ThemeModel model;
 
   @override
   Widget build(BuildContext context) {
+    final List<HouseElement> listElement = [
+      HouseElement(
+        elementName: "Roof",
+        color: model.roofColor,
+        onTap: () => controller.showColorModel(
+            model.roofColor, model.name, EHouseElementType.roof),
+      ),
+      HouseElement(
+        elementName: "Wall",
+        color: model.wallColor,
+        onTap: () => controller.showColorModel(
+            model.wallColor, model.name, EHouseElementType.wall),
+      ),
+      HouseElement(
+        elementName: "Door",
+        color: model.doorColor,
+        onTap: () => controller.showColorModel(
+            model.doorColor, model.name, EHouseElementType.door),
+      ),
+    ];
     return Container(
       padding: const EdgeInsets.all(10),
       child: Column(
         children: [
-          const TextField(
-              decoration: InputDecoration(
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10))),
-            labelText: "Theme name",
-          )),
+          TextField(
+              enabled: false,
+              controller: TextEditingController(text: model.name),
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                labelText: "Theme name",
+              )),
           Container(
             margin: const EdgeInsets.only(top: 5),
             child: Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                HouseElement(elementName: "Roof"),
-                HouseElement(elementName: "Wall"),
-                HouseElement(elementName: "Door"),
-              ],
+              children: listElement,
             ),
           ),
         ],

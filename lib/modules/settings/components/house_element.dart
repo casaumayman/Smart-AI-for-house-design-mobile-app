@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
 class HouseElement extends StatelessWidget {
-  const HouseElement({super.key, required this.elementName});
+  const HouseElement(
+      {super.key, required this.elementName, required this.color, this.onTap});
   final String elementName;
+  final Color color;
+  final Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +22,13 @@ class HouseElement extends StatelessWidget {
           const SizedBox(
             width: 5,
           ),
-          const Placeholder(
-            fallbackWidth: 50,
-            fallbackHeight: 50,
+          InkWell(
+            onTap: onTap,
+            child: Container(
+              width: 50,
+              height: 50,
+              color: color,
+            ),
           )
         ],
       ),
