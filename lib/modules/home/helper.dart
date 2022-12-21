@@ -44,6 +44,13 @@ int _calculateOverLength(int length) {
   return 0;
 }
 
+double _calculateOverPercent(int over, int moved) {
+  if (moved == 0) {
+    return 0.0;
+  }
+  return (over / moved).abs();
+}
+
 double _indexTripValue(double a, double b, double c) {
   return max(a, max(b, c));
 }
@@ -194,9 +201,9 @@ RGBArray mappingColor(RGBArray origin, RGBArray mask, ThemeModel themeModel) {
         int greenOver = _calculateOverLength(green1);
         int blueOver = _calculateOverLength(blue1);
         // Get percent over
-        double redOverPercent = redOver / redM;
-        double greenOverPercent = greenOver / greenM;
-        double blueOverPercent = blueOver / blueM;
+        double redOverPercent = _calculateOverPercent(redOver, redM);
+        double greenOverPercent = _calculateOverPercent(greenOver, greenM);
+        double blueOverPercent = _calculateOverPercent(blueOver, blueM);
         // Find max over percent
         double maxValue =
             _indexTripValue(redOverPercent, greenOverPercent, blueOverPercent);
