@@ -13,7 +13,7 @@ class ThemePicker extends GetView<HomeController> {
   Widget build(BuildContext context) {
     onChange(String? value) {
       if (value != null) {
-        _themeServices.setTheme(value);
+        controller.setTheme(value);
       }
     }
 

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:change_house_colors/modules/home/helper.dart';
 import 'package:change_house_colors/modules/home/models/process_status.dart';
 import 'package:change_house_colors/routes/routes.dart';
@@ -6,9 +8,9 @@ import 'package:change_house_colors/shared/models/predict_res.dart';
 import 'package:change_house_colors/shared/services/services.dart';
 import 'package:change_house_colors/shared/utils/image_picker_utils.dart';
 import 'package:change_house_colors/shared/utils/snackbar_utils.dart';
+import 'package:change_house_colors/shared/utils/timing_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:image/image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 
@@ -23,6 +25,9 @@ class HomeController extends GetxController {
   final allowGoToHistory = false.obs;
   final isConnectSocket = false.obs;
   final currentStatus = Rx<EProcessStatus>(EProcessStatus.init);
+
+  RGBArray? _maskRGB;
+  RGBArray? _originRGB;
 
   void _setCurrentImage(XFile file) {
     currentInputImage(file);
@@ -39,17 +44,44 @@ class HomeController extends GetxController {
     super.onInit();
   }
 
-  void _processResponse(PredictResponse predict) async {
-    final bytes = await base64ToBytesIsolate(predict.pictureMask);
-    var image = decodePng(bytes);
-    if (image == null) {
-      debugPrint("Image == null");
+  void _mappingColor() async {
+    currentStatus(EProcessStatus.colorMapping);
+    TimeMeasure mappingColorMeasure = TimeMeasure("Mapping color!");
+    var coloredRGB =
+        mappingColor(_originRGB!, _maskRGB!, _themeService.selectedTheme);
+    mappingColorMeasure.nextMeasure("mappingColorIsolate");
+    var image = await convertRGBToImage(coloredRGB);
+    mappingColorMeasure.nextMeasure("convertRGBToImageIsolate");
+    var bytes = await image.toByteData(format: ImageByteFormat.png);
+    mappingColorMeasure.nextMeasure("toByteData");
+    if (bytes == null) {
+      throw Exception("bytes == null");
+    }
+    currentOutputImage(Uint8List.view(bytes.buffer));
+    mappingColorMeasure.nextMeasure("Uint8List.view");
+    currentStatus(EProcessStatus.done);
+  }
+
+  void setTheme(String themeName) async {
+    if (themeName == _themeService.selectedTheme.name) {
       return;
     }
-    var colored = mappingColor(image, bytes, _themeService.selectedTheme);
-    debugPrint("colored: ${colored.length}");
-    currentOutputImage(bytes);
-    currentStatus(EProcessStatus.done);
+    _themeService.setTheme(themeName);
+    if (_maskRGB != null && _originRGB != null) {
+      _mappingColor();
+    }
+  }
+
+  void _processResponse(PredictResponse predict) async {
+    var originBytes = await getBytesFromXfileIsolate(currentInputImage.value!);
+    var maskRGB = await convertBase64ToRGB(predict.pictureMask);
+    var originRGB = convertBytesToRGB(originBytes);
+    if (maskRGB == null || originRGB == null) {
+      throw Exception("list_rgb or origin_rgb null");
+    }
+    _maskRGB = maskRGB;
+    _originRGB = originRGB;
+    _mappingColor();
   }
 
   void _sendPredictToServer(XFile file) async {
@@ -67,7 +99,6 @@ class HomeController extends GetxController {
       final requestModel =
           PredictRequest(pictureBase64: base64, fileName: fileName);
       var response = await _predictService.getPredictMask(requestModel);
-      currentStatus(EProcessStatus.colorMapping);
       _processResponse(response);
     } catch (e) {
       currentStatus(EProcessStatus.error);
