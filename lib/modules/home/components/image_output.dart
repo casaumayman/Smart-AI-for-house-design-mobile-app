@@ -25,6 +25,9 @@ class ImageOutput extends GetView<HomeController> {
           if (status == EProcessStatus.init) {
             messsage = "Please pick or capture a picture!";
             isLoading = false;
+          } else if (status == EProcessStatus.resizing) {
+            messsage = "Resizing image!";
+            isLoading = true;
           } else if (status == EProcessStatus.waitingServer) {
             messsage = "Waiting response from server!";
             isLoading = true;

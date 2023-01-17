@@ -21,7 +21,7 @@ class AppController extends GetxController {
 
   @override
   void onInit() {
-    _socketService.connect();
+    // _socketService.connect();
     _socketService.onReceive((data) {
       final responseModel = ProcessImageResponse.fromJson(data);
       debugPrint("Received data: ${responseModel.imageName}");

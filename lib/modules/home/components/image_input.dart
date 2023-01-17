@@ -1,9 +1,7 @@
-import 'dart:io';
-
 import 'package:change_house_colors/modules/home/home_controller.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 
 class ImageInput extends GetView<HomeController> {
   const ImageInput({super.key});
@@ -19,8 +17,8 @@ class ImageInput extends GetView<HomeController> {
     );
   }
 
-  Widget _renderImage(XFile? xFile) {
-    if (xFile == null) {
+  Widget _renderImage(Uint8List? bytes) {
+    if (bytes == null) {
       return IconButton(
         icon: const Icon(Icons.add_a_photo),
         iconSize: 50,
@@ -29,13 +27,12 @@ class ImageInput extends GetView<HomeController> {
         },
       );
     }
-    File imageFile = File(xFile.path);
     return Stack(
       children: [
         Container(
           alignment: Alignment.center,
-          child: Image.file(
-            imageFile,
+          child: Image.memory(
+            bytes,
             fit: BoxFit.contain,
           ),
         ),

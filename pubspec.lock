@@ -162,7 +162,7 @@ packages:
       name: image
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.2.2"
+    version: "4.0.10"
   image_gallery_saver:
     dependency: "direct main"
     description:

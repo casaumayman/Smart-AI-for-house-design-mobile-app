@@ -14,18 +14,18 @@ class HomeAppBarAction extends GetView<HomeController> {
       alignment: Alignment.center,
       child: Row(
         children: [
-          Obx(() {
-            if (controller.isConnectSocket.isTrue) {
-              return const Text(
-                "Connected",
-                style: TextStyle(color: Color(0xFF90EE90)),
-              );
-            }
-            return const Text(
-              "Connecting",
-              style: TextStyle(color: Color(0xFFFF7F7F)),
-            );
-          }),
+          // Obx(() {
+          //   if (controller.isConnectSocket.isTrue) {
+          //     return const Text(
+          //       "Connected",
+          //       style: TextStyle(color: Color(0xFF90EE90)),
+          //     );
+          //   }
+          //   return const Text(
+          //     "Connecting",
+          //     style: TextStyle(color: Color(0xFFFF7F7F)),
+          //   );
+          // }),
           IconButton(
               onPressed: () {
                 Get.toNamed(Routes.setting);

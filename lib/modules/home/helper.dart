@@ -20,10 +20,39 @@ Future<Uint8List> base64ToBytesIsolate(String mask) async {
   return compute(readBytes, mask);
 }
 
+Future<Uint8List> resizedBytesIsolate(XFile xFile) async {
+  var cmd = image_lib.Command()..decodeImageFile(xFile.path);
+  var image = await cmd.getImage();
+  if (image == null) {
+    debugPrint("Image is null");
+    throw Exception("Image is null");
+  }
+  final isValid = image.width >= 1200 && image.height >= 800;
+  if (!isValid) {
+    throw Exception("Image size must bigger or eval 1200x800");
+  }
+  return compute((img) {
+    final isHorizontal = img.width > img.height;
+    late image_lib.Image resizedImage;
+    if (isHorizontal) {
+      resizedImage = image_lib.copyResize(img,
+          width: 1200, interpolation: image_lib.Interpolation.nearest);
+    } else {
+      resizedImage = image_lib.copyResize(img,
+          height: 800, interpolation: image_lib.Interpolation.nearest);
+    }
+    return image_lib.encodePng(resizedImage);
+  }, image);
+}
+
 Future<String> xFileToBase64Isolate(XFile file) async {
   final imageBytes = await file.readAsBytes();
   String base64encoded = await compute(base64Encode, imageBytes);
   return base64encoded;
+}
+
+Future<String> bytesToBase64(Uint8List bytes) {
+  return compute(base64Encode, bytes);
 }
 
 bool _validRGB(int red, int green, int blue) {
@@ -220,13 +249,13 @@ RGBArray mappingColor(RGBArray origin, RGBArray mask, ThemeModel themeModel) {
   return arr;
 }
 
-RGBArray? convertBytesToRGB(Uint8List bytes) {
-  final decodedImage = image_lib.decodePng(bytes);
+Future<RGBArray?> convertBytesToRGB(Uint8List bytes) async {
+  final decodedImage = image_lib.decodeImage(bytes);
   if (decodedImage == null) {
     debugPrint("decodedImage == null");
     return null;
   }
-  final decodedBytes = decodedImage.getBytes(format: image_lib.Format.rgb);
+  final decodedBytes = decodedImage.getBytes(order: image_lib.ChannelOrder.rgb);
   RGBArray imgArr = [];
   for (int y = 0; y < decodedImage.height; y++) {
     imgArr.add([]);
