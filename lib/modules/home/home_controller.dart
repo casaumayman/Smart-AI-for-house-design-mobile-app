@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
@@ -60,21 +61,41 @@ class HomeController extends GetxController {
     }
   }
 
+  Future<String> _poollingMaskUrl(int predictId) async {
+    Completer<String> completer = Completer<String>();
+    Timer.periodic(const Duration(seconds: 2), (timer) async {
+      final maskUrl = await _predictService.getMaskImageUrl(predictId);
+      debugPrint("polling maskURL: $maskUrl");
+      if (maskUrl.isError == true) {
+        timer.cancel();
+        completer.completeError(Exception(maskUrl.errorDetail));
+      }
+      if (maskUrl.data != null) {
+        timer.cancel();
+        completer.complete(maskUrl.data);
+      }
+    });
+    return completer.future;
+  }
+
   void _sendPredictToServer(Uint8List resizedByte) async {
     try {
       currentStatus(EProcessStatus.waitingServer);
-      String base64encoded = await bytesToBase64(resizedByte);
-      String base64 = "data:$mimeType;base64,$base64encoded";
       final now = DateTime.now().millisecondsSinceEpoch;
       String ext = mimeType.split('/')[1];
       String fileName = "ori_$now.$ext";
-      final requestModel =
-          PredictRequest(pictureBase64: base64, fileName: fileName);
-      var response = await _predictService.getPredictMask(requestModel);
-      _processResponse(response);
-    } catch (e) {
+      var predictId =
+          await _predictService.postPredict(fileName, resizedByte, mimeType);
+      if (predictId == null) {
+        throw Exception("Predict ID null");
+      }
+      final maskUrl = await _poollingMaskUrl(predictId);
+      final bytes = await _predictService.downloadImage(maskUrl);
+      _processResponse(bytes);
+    } on Exception catch (e) {
       currentStatus(EProcessStatus.error);
       debugPrint("Error: $e");
+      showSnackbarError(e.toString());
     }
   }
 
@@ -106,9 +127,9 @@ class HomeController extends GetxController {
     }
   }
 
-  void _processResponse(PredictResponse predict) async {
+  void _processResponse(Uint8List bytes) async {
     // var originBytes = await getBytesFromXfileIsolate(currentInputImage.value!);
-    var maskRGB = await convertBase64ToRGB(predict.pictureMask);
+    var maskRGB = await convertBytesToRGB(bytes);
     var originRGB = await convertBytesToRGB(resizedBytes!);
     if (maskRGB == null || originRGB == null) {
       throw Exception("list_rgb or origin_rgb null");

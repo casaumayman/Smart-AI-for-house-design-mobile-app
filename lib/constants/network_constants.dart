@@ -1,3 +1,4 @@
 // const networkHost = "http://192.168.50.221:5000/";
-var networkHost = Uri.parse("http://160.16.239.17:5001");
+const networkHost = "http://115.79.209.12";
+const maskImageUrl = "public/mask";
 const eventName = "PROCESS_IMAGE";
