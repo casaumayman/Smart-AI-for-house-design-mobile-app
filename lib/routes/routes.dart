@@ -1,27 +1,29 @@
-import 'package:change_house_colors/modules/history/history_binding.dart';
-import 'package:change_house_colors/modules/history/history_screen.dart';
-import 'package:change_house_colors/modules/home/home_binding.dart';
-import 'package:change_house_colors/modules/home/home_screen.dart';
-import 'package:change_house_colors/modules/settings/setting_binding.dart';
-import 'package:change_house_colors/modules/settings/setting_screen.dart';
+import 'package:change_house_colors/modules/decorate/decorate.dart';
+import 'package:change_house_colors/modules/home/home.dart';
+import 'package:change_house_colors/modules/result/result_screen.dart';
+import 'package:change_house_colors/modules/splash/splash.dart';
 import 'package:get/get.dart';
 
 class Routes {
-  static const home = '/';
-  static const history = '/history';
-  static const setting = '/setting';
+  static const home = '/home';
+  static const decorate = '/decorate';
+  static const results = '/results';
 
   static List<GetPage> pages = [
     GetPage(
+        name: '/',
+        page: () => const SplashScreen(),
+        binding: BindingsBuilder(() {
+          Get.put(SplashController());
+        })),
+    GetPage(
       name: home,
       page: () => const HomeScreen(),
-      binding: HomeBinding(),
     ),
     GetPage(
-        name: history,
-        page: () => const HistoryScreen(),
-        binding: HistoryBinding()),
-    GetPage(
-        name: setting, page: () => SettingScreen(), binding: SettingBinding()),
+        name: decorate,
+        page: () => const DecorateScreen(),
+        binding: DecorateBinding()),
+    GetPage(name: results, page: () => const ResultScreen()),
   ];
 }

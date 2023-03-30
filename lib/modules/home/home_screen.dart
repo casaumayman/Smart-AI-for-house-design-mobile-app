@@ -1,8 +1,6 @@
-import 'package:change_house_colors/modules/home/components/app_bar_action.dart';
-import 'package:change_house_colors/modules/home/components/image_input.dart';
-import 'package:change_house_colors/modules/home/components/image_output.dart';
-import 'package:change_house_colors/modules/home/components/theme_picker.dart';
+import 'package:change_house_colors/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -10,19 +8,28 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Home"),
-        actions: const [HomeAppBarAction()],
+      appBar: AppBar(title: const Text("Features")),
+      body: Container(
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ElevatedButton(
+                onPressed: () {
+                  Get.toNamed(Routes.decorate, arguments: "Exterior");
+                },
+                child: const Text("Exterior")),
+            const SizedBox(
+              height: 10,
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  Get.toNamed(Routes.decorate, arguments: "Interior");
+                },
+                child: const Text("Interior"))
+          ],
+        ),
       ),
-      body: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            children: [
-              const Expanded(child: ImageInput()),
-              ThemePicker(),
-              const Expanded(child: ImageOutput()),
-            ],
-          )),
     );
   }
 }
