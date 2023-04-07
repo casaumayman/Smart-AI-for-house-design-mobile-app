@@ -1,8 +1,8 @@
-import 'package:change_house_colors/routes/routes.dart';
+import 'package:change_house_colors/modules/home/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends GetView<HomeController> {
   const HomeScreen({super.key});
 
   @override
@@ -15,17 +15,13 @@ class HomeScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             ElevatedButton(
-                onPressed: () {
-                  Get.toNamed(Routes.decorate, arguments: "Exterior");
-                },
+                onPressed: controller.onPressExterior,
                 child: const Text("Exterior")),
             const SizedBox(
               height: 10,
             ),
             ElevatedButton(
-                onPressed: () {
-                  Get.toNamed(Routes.decorate, arguments: "Interior");
-                },
+                onPressed: controller.onPressInterior,
                 child: const Text("Interior"))
           ],
         ),

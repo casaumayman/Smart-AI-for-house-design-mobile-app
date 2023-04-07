@@ -16,10 +16,7 @@ class Routes {
         binding: BindingsBuilder(() {
           Get.put(SplashController());
         })),
-    GetPage(
-      name: home,
-      page: () => const HomeScreen(),
-    ),
+    GetPage(name: home, page: () => const HomeScreen(), binding: HomeBinding()),
     GetPage(
         name: decorate,
         page: () => const DecorateScreen(),
