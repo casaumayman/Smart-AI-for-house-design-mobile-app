@@ -23,7 +23,7 @@ class HomeController extends GetxController {
     }
   }
 
-  prepareSamples(String type) async {
+  _prepareSamples(String type) async {
     Get.dialog(
         AlertDialog(
           content: Row(
@@ -45,7 +45,7 @@ class HomeController extends GetxController {
         ),
         barrierDismissible: false);
     const String directory = 'sdcard/Download';
-    const String folderPath = '$directory/images';
+    const String folderPath = '$directory/samples';
     await Directory(folderPath).create(recursive: true);
     if (type == "Interior") {
       final List<String> assetImages = [
@@ -64,12 +64,12 @@ class HomeController extends GetxController {
   }
 
   onPressInterior() async {
-    await prepareSamples("Interior");
+    await _prepareSamples("Interior");
     Get.toNamed(Routes.decorate, arguments: "Interior");
   }
 
   onPressExterior() async {
-    await prepareSamples("Exterior");
+    await _prepareSamples("Exterior");
     Get.toNamed(Routes.decorate, arguments: "Exterior");
   }
 }
