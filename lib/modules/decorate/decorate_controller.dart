@@ -36,18 +36,22 @@ class DecorateController extends GetxController {
       return;
     }
     final ImagePicker picker = ImagePicker();
-    if (res == "Camera") {
-      var image = await picker.pickImage(source: ImageSource.camera);
+    try {
+      if (res == "Camera") {
+        var image = await picker.pickImage(source: ImageSource.camera);
+        if (image != null) {
+          imageInput.value = image.path;
+          _fileInputName = image.name;
+        }
+        return;
+      }
+      var image = await picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
         imageInput.value = image.path;
         _fileInputName = image.name;
       }
-      return;
-    }
-    var image = await picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      imageInput.value = image.path;
-      _fileInputName = image.name;
+    } catch (e) {
+      showSnackbarError("$e");
     }
   }
 

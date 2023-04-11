@@ -4,22 +4,36 @@ import 'package:change_house_colors/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeController extends GetxController {
-  _writeFiles(List<String> files, String directory) async {
-    for (final String assetImage in files) {
-      final String imageName = assetImage.split('/').last;
-      final String imagePath = '$directory/$imageName';
-
-      // check if the image already exists in the folder
-      if (await File(imagePath).exists()) {
-        continue;
+  _saveSingleFile(String imageName, Uint8List bytes) async {
+    if (Platform.isAndroid) {
+      final imagePath = '/sdcard/Download/$imageName';
+      final imageFile = File(imagePath);
+      await imageFile.writeAsBytes(bytes);
+      debugPrint("Image path: $imagePath");
+      return;
+    } else {
+      final result = await ImageGallerySaver.saveImage(
+        bytes,
+      );
+      if (result['isSuccess']) {
+        debugPrint('Image saved to Photos!');
+      } else {
+        debugPrint('Failed to save image to Photos');
       }
-      // read the asset image as bytes
+      return;
+    }
+  }
+
+  _writeFiles(List<String> files) async {
+    for (final String assetImage in files) {
       final ByteData bytes = await rootBundle.load(assetImage);
       final Uint8List imageData = bytes.buffer.asUint8List();
-      // write the image bytes to the file
-      await File(imagePath).writeAsBytes(imageData);
+      final String imageName = assetImage.split('/').last;
+      await _saveSingleFile(imageName, imageData);
     }
   }
 
@@ -44,21 +58,31 @@ class HomeController extends GetxController {
           ],
         ),
         barrierDismissible: false);
-    const String directory = 'sdcard/Download';
-    const String folderPath = '$directory/samples';
-    await Directory(folderPath).create(recursive: true);
+    if (Platform.isAndroid) {
+      String directory = 'sdcard/Download';
+      await Directory(directory).create(recursive: true);
+    }
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (type == "Interior") {
-      final List<String> assetImages = [
-        'lib/assets/samples/interior-sample-1.jpg',
-        'lib/assets/samples/interior-sample-2.jpg',
-      ];
-      await _writeFiles(assetImages, folderPath);
+      final String? interiorFlag = prefs.getString('Interior');
+      if (interiorFlag == null) {
+        final List<String> assetImages = [
+          'lib/assets/samples/interior-sample-1.jpg',
+          'lib/assets/samples/interior-sample-2.jpg',
+        ];
+        await _writeFiles(assetImages);
+        await prefs.setString("Interior", "OK");
+      }
     } else {
-      final List<String> assetImages = [
-        'lib/assets/samples/exterior-sample-1.jpg',
-        'lib/assets/samples/exterior-sample-2.jpg',
-      ];
-      await _writeFiles(assetImages, folderPath);
+      final String? exteriorFlag = prefs.getString('Exterior');
+      if (exteriorFlag == null) {
+        final List<String> assetImages = [
+          'lib/assets/samples/exterior-sample-1.jpg',
+          'lib/assets/samples/exterior-sample-2.jpg',
+        ];
+        await _writeFiles(assetImages);
+        await prefs.setString("Exterior", "OK");
+      }
     }
     Get.back();
   }
