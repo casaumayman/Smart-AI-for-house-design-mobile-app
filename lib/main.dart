@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Flutter Demo',
+      title: 'Smart AI for house design',
       theme: appTheme,
       getPages: Routes.pages,
       initialRoute: "/",
