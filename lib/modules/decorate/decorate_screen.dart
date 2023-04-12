@@ -10,7 +10,7 @@ class DecorateScreen extends GetView<DecorateController> {
 
   @override
   Widget build(BuildContext context) {
-    final screenName = Get.arguments;
+    final screenName = Get.arguments ?? "Exterior";
     return Scaffold(
       appBar: AppBar(title: Text(screenName)),
       body: SafeArea(

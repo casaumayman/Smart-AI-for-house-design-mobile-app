@@ -31,10 +31,12 @@ class ImageInput extends GetView<DecorateController> {
       children: [
         Container(
           alignment: Alignment.center,
-          child: Image.file(
-            File(path),
-            fit: BoxFit.contain,
-          ),
+          child: controller.useAsset.value
+              ? Image.asset(path, fit: BoxFit.contain)
+              : Image.file(
+                  File(path),
+                  fit: BoxFit.contain,
+                ),
         ),
         Container(
           width: double.infinity,

@@ -16,13 +16,13 @@ class HomeScreen extends GetView<HomeController> {
           children: [
             ElevatedButton(
                 onPressed: controller.onPressExterior,
-                child: const Text("Exterior")),
+                child: const Text("Exterior design")),
             const SizedBox(
               height: 10,
             ),
             ElevatedButton(
                 onPressed: controller.onPressInterior,
-                child: const Text("Interior"))
+                child: const Text("Interior design"))
           ],
         ),
       ),
