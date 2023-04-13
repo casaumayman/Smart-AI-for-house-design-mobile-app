@@ -133,7 +133,7 @@ class DecorateController extends GetxController {
             timer.cancel();
           } else {
             inQueue.value = resultUrls['inQueue'];
-            if (remainTime.value == -1) {
+            if (remainTime.value <= 0) {
               remainTime.value = resultUrls['initialCountDown'];
             }
           }
