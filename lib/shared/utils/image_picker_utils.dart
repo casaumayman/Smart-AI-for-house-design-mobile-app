@@ -19,7 +19,6 @@ Widget _sheetItem(
 }
 
 Future<T?> showImagePicker<T>(List<T> items) async {
-  var itemRenders = items.map((item) => item.toString());
   Widget bottomsheet = SafeArea(
     child: Column(
       mainAxisSize: MainAxisSize.min,
@@ -31,9 +30,9 @@ Future<T?> showImagePicker<T>(List<T> items) async {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: itemRenders
+            children: items
                 .map((item) => _sheetItem(
-                    title: item,
+                    title: item.toString(),
                     isCancel: false,
                     onTap: () {
                       Get.back(result: item);

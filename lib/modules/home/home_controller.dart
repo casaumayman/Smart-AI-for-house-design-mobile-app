@@ -14,6 +14,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 enum EDesignMode { interior, exterior }
 
+class UploadType {
+  UploadType({required this.key, required this.name});
+
+  final String key;
+  final String name;
+
+  @override
+  String toString() {
+    return name;
+  }
+}
+
 class HomeController extends GetxController {
   final _themeServices = Get.find<ThemeService>();
   final _predictServices = Get.find<PredictService>();
@@ -84,13 +96,17 @@ class HomeController extends GetxController {
   }
 
   void showImageSourcePicker() async {
-    var res = await showImagePicker<String>(["camera".tr, "library".tr]);
+    var res = await showImagePicker<UploadType>([
+      UploadType(key: "Camera", name: "camera".tr),
+      UploadType(key: "Library", name: "library".tr)
+    ]);
     if (res == null) {
       return;
     }
     final ImagePicker picker = ImagePicker();
+    debugPrint("res: $res");
     try {
-      if (res == "Camera") {
+      if (res.key == "Camera") {
         var image = await picker.pickImage(source: ImageSource.camera);
         if (image != null) {
           imageInput.value = image.path;
@@ -98,7 +114,7 @@ class HomeController extends GetxController {
         }
         useAsset.value = false;
         return;
-      } else if (res == "Library") {
+      } else if (res.key == "Library") {
         var image = await picker.pickImage(source: ImageSource.gallery);
         if (image != null) {
           imageInput.value = image.path;
