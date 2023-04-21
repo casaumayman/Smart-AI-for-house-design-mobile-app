@@ -1,5 +1,5 @@
-import 'package:card_swiper/card_swiper.dart';
-import 'package:change_house_colors/modules/result/result_card.dart';
+import 'package:change_house_colors/modules/result/result_single.dart';
+import 'package:change_house_colors/shared/components/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -8,26 +8,25 @@ class ResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 0_1681288343672.png;1_1681288343764.png;2_1681288343868.png
     final List<String> listImageUrl = Get.arguments;
+    // 0_1681983532536.png;1_1681983532653.png;2_1681983532756.png
     return Scaffold(
-      appBar: AppBar(title: const Text("Results")),
-      body: Container(
-        alignment: Alignment.center,
-        child: Swiper(
-          loop: false,
-          itemBuilder: (BuildContext context, int index) {
-            debugPrint("Swipe index: $index");
-            if (index == 0) {
-              return ResultCard(
-                  listImageUrl.sublist(0, listImageUrl.length == 1 ? 1 : 2));
-            }
-            return ResultCard(listImageUrl.sublist(2, listImageUrl.length));
-          },
-          itemCount: ((listImageUrl.length - 1) ~/ 2) + 1,
-          pagination: const SwiperPagination(),
-          control: const SwiperControl(),
-        ),
-      ),
-    );
+        appBar: const MyAppBar(),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              for (int i = 0; i < listImageUrl.length; i++)
+                Column(
+                  children: [
+                    ResultSingle(listImageUrl[i]),
+                    SizedBox(
+                      height: i == listImageUrl.length - 1 ? 0 : 10,
+                    ),
+                  ],
+                )
+            ],
+          ),
+        ));
   }
 }

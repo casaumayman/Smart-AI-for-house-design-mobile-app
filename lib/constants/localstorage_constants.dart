@@ -1,2 +1,2 @@
-const historyKey = "HISTORY";
 const settingKey = "SETTING";
+const localeKey = "LOCALE";

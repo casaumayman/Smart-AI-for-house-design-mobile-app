@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 Widget _sheetItem(
     {String title = "", bool isCancel = false, Function()? onTap}) {
-  var colorPrimary = Get.theme.colorScheme.primary;
+  var colorPrimary = Get.theme.primaryColor;
   return InkWell(
     onTap: onTap,
     child: Container(
@@ -47,7 +47,7 @@ Future<T?> showImagePicker<T>(List<T> items) async {
         ),
         margin: const EdgeInsets.only(top: 10),
         child: _sheetItem(
-            title: "Cancel",
+            title: "cancel".tr,
             isCancel: true,
             onTap: () {
               Get.back();

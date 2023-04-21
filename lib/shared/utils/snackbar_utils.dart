@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 void showSnackbarError(String message) {
   const mainColor = Colors.red;
-  Get.snackbar("Error", message,
+  Get.snackbar("error".tr, message,
       colorText: mainColor,
       borderColor: mainColor,
       borderWidth: 1,
@@ -17,7 +17,7 @@ void showSnackbarError(String message) {
 
 void showSnackbarSuccess(String message) {
   const mainColor = Colors.green;
-  Get.snackbar("Success", message,
+  Get.snackbar("success".tr, message,
       colorText: mainColor,
       borderColor: mainColor,
       borderWidth: 1,
@@ -31,7 +31,7 @@ void showSnackbarSuccess(String message) {
 
 void showSnackbarInfo(String message) {
   const mainColor = Colors.blue;
-  Get.snackbar("Notification", message,
+  Get.snackbar("notification".tr, message,
       colorText: mainColor,
       borderColor: mainColor,
       borderWidth: 1,

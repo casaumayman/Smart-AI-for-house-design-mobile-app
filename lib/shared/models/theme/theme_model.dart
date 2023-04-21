@@ -7,6 +7,7 @@ class ThemeModel {
   ThemeModel(this.id, this.name);
   int id;
   String name;
+  String? descriptImg;
 
   factory ThemeModel.fromJson(Map<String, dynamic> json) =>
       _$ThemeModelFromJson(json);

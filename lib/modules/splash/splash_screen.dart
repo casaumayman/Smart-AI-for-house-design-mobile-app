@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -9,6 +10,7 @@ class SplashScreen extends StatelessWidget {
       body: Container(
         color: Colors.white,
         alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -16,9 +18,10 @@ class SplashScreen extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            const Text(
-              "Smart AI for house design",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            Text(
+              "smart_ai_for_house_design".tr,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(
               height: 10,

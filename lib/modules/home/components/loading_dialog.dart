@@ -1,8 +1,8 @@
-import 'package:change_house_colors/modules/decorate/decorate_controller.dart';
+import 'package:change_house_colors/modules/home/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class LoadingDialog extends GetView<DecorateController> {
+class LoadingDialog extends GetView<HomeController> {
   const LoadingDialog(this.onCancel, {super.key});
 
   final Function() onCancel;
@@ -14,16 +14,18 @@ class LoadingDialog extends GetView<DecorateController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
         children: [
-          const CircularProgressIndicator(),
+          CircularProgressIndicator(
+            color: Get.theme.primaryColor,
+          ),
           const SizedBox(width: 20),
           Expanded(
             child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Processing...",
-                    style: TextStyle(
+                  Text(
+                    "${"processing".tr}...",
+                    style: const TextStyle(
                         color: Colors.black, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(
@@ -31,19 +33,19 @@ class LoadingDialog extends GetView<DecorateController> {
                   ),
                   Obx(() {
                     if (controller.inQueue.value == -1) {
-                      return const Text("Initial your request!");
+                      return Text("initial_your_request".tr);
                     } else if (controller.inQueue.value == 0) {
-                      return const Text("Processing your request");
+                      return Text("processing_your_request".tr);
                     }
-                    return Text(
-                        "Your position in the queue is ${controller.inQueue.value}");
+                    return Text("your_position_in_the_queue_is".trParams(
+                        {"inQueue": controller.inQueue.value.toString()}));
                   }),
                   Obx(() {
                     if (controller.remainTime.value == -1) {
-                      return const Text("Time remaining: ---");
+                      return Text("time_remaining".tr);
                     }
-                    return Text(
-                        "Time remaining: ${controller.remainTime.value}s");
+                    return Text("time_remaining_dynamic".trParams(
+                        {"remain": controller.remainTime.value.toString()}));
                   }),
                 ]),
           ),
@@ -55,7 +57,10 @@ class LoadingDialog extends GetView<DecorateController> {
             Get.back();
             onCancel();
           },
-          child: const Text("Cancel"),
+          child: Text(
+            "cancel".tr,
+            style: TextStyle(color: Get.theme.primaryColor),
+          ),
         ),
       ],
     );

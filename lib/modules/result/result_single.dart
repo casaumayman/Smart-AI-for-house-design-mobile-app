@@ -27,20 +27,20 @@ class ResultSingle extends StatelessWidget {
       final future = file.writeAsBytes(response.bodyBytes);
       future.then((value) {
         Get.back();
-        showSnackbarSuccess("Image saved to ${value.path}");
+        showSnackbarSuccess("image_saved_to".trParams({"path": value.path}));
       }).catchError((onError) {
         Get.back();
-        showSnackbarError("Save image failed!");
+        showSnackbarError("save_image_failed".tr);
         debugPrint("Save image fail $onError");
       });
     } else {
       try {
         await ImageGallerySaver.saveImage(response.bodyBytes);
         Get.back();
-        showSnackbarSuccess("Image saved to Photos");
+        showSnackbarSuccess("image_saved_to_photos".tr);
       } catch (e) {
         Get.back();
-        showSnackbarError("Save image failed!");
+        showSnackbarError("save_image_failed".tr);
         debugPrint("Save image fail $e");
       }
     }
@@ -49,10 +49,10 @@ class ResultSingle extends StatelessWidget {
   _showLoadingDialog() {
     Get.dialog(AlertDialog(
       content: Row(
-        children: const [
-          CircularProgressIndicator(),
-          SizedBox(width: 20),
-          Text("Saving image..."),
+        children: [
+          const CircularProgressIndicator(),
+          const SizedBox(width: 20),
+          Text("saving_image".tr),
         ],
       ),
     ));
