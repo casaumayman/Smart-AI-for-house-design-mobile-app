@@ -20,40 +20,42 @@ Widget _sheetItem(
 
 Future<T?> showImagePicker<T>(List<T> items) async {
   var itemRenders = items.map((item) => item.toString());
-  Widget bottomsheet = Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+  Widget bottomsheet = SafeArea(
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: itemRenders
+                .map((item) => _sheetItem(
+                    title: item,
+                    isCancel: false,
+                    onTap: () {
+                      Get.back(result: item);
+                    }))
+                .toList(),
+          ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: itemRenders
-              .map((item) => _sheetItem(
-                  title: item,
-                  isCancel: false,
-                  onTap: () {
-                    Get.back(result: item);
-                  }))
-              .toList(),
+        Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
+          margin: const EdgeInsets.only(top: 10),
+          child: _sheetItem(
+              title: "cancel".tr,
+              isCancel: true,
+              onTap: () {
+                Get.back();
+              }),
         ),
-      ),
-      Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
-        margin: const EdgeInsets.only(top: 10),
-        child: _sheetItem(
-            title: "cancel".tr,
-            isCancel: true,
-            onTap: () {
-              Get.back();
-            }),
-      ),
-    ],
+      ],
+    ),
   );
   var res = await Get.bottomSheet<T>(bottomsheet,
       persistent: true, ignoreSafeArea: false);
